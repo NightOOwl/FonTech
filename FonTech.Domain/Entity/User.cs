@@ -1,5 +1,4 @@
 ﻿using FonTech.Domain.Interfaces;
-using System.ComponentModel.DataAnnotations;
 
 namespace FonTech.Domain.Entity
 {

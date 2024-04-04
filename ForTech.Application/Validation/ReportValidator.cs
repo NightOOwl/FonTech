@@ -3,11 +3,6 @@ using FonTech.Domain.Enum;
 using FonTech.Domain.Interfaces.Validations;
 using FonTech.Domain.Result;
 using ForTech.Application.Resources;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ForTech.Application.Validation
 {

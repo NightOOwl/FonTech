@@ -76,6 +76,40 @@ namespace ForTech.Application.Services
         }
 
         /// <inheritdoc />
+        public async Task<BaseResult<ReportDto>> DeleteReportAsync(long id)
+        {
+            try
+            {
+                var report = await _reportRepository.GetAll().FirstOrDefaultAsync(x=>x.Id == id);
+                var result = _reportValidator.ValidateOnNull(report);
+
+                if (!result.isSuccess)
+                {
+                    return new BaseResult<ReportDto>
+                    {
+                        ErrorMessage = ErrorMessage.InternalServerError,
+                        ErrorCode = (int)ErrorCodes.InternalServerError
+                    };
+                }
+
+                await _reportRepository.RemoveAsync(report);
+                return new BaseResult<ReportDto>()
+                {
+                    Data = _mapper.Map<ReportDto>(report)
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return new BaseResult<ReportDto>()
+                {
+                    ErrorMessage = ErrorMessage.InternalServerError,
+                    ErrorCode = (int)ErrorCodes.InternalServerError,
+                };
+            }
+        }
+
+        /// <inheritdoc />
         public async Task<BaseResult<ReportDto>> GetReportByIdAsyncOrNull(long id)
         {
             ReportDto? report;
@@ -147,6 +181,43 @@ namespace ForTech.Application.Services
                 Data = reports,
                 Count = reports.Count
             };
+        }
+
+        /// <inheritdoc />
+        public async Task<BaseResult<ReportDto>> UpdateReportAsync(UpdateReportDto dto)
+        {
+            try
+            {
+                var report = await _reportRepository.GetAll().FirstOrDefaultAsync(x=>x.Id == dto.Id);
+                var result = _reportValidator.ValidateOnNull(report);
+
+                if (!result.isSuccess)
+                {
+                    return new BaseResult<ReportDto>()
+                    {
+                        ErrorMessage = result.ErrorMessage,
+                        ErrorCode = result.ErrorCode,
+                    };
+                } 
+
+                report.Name =  dto.Name;
+                report.Description = dto.Description;
+
+                await _reportRepository.UpdateAsync(report);
+                return new BaseResult<ReportDto>()
+                {
+                    Data = _mapper.Map<ReportDto>(dto)
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return new BaseResult<ReportDto>()
+                {
+                    ErrorMessage = ErrorMessage.InternalServerError,
+                    ErrorCode = (int)ErrorCodes.InternalServerError,
+                };
+            }
         }
     }
 }
